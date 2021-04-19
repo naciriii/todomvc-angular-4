@@ -38,7 +38,7 @@ describe('AppComponent', () => {
   }));
 
   it('should display "Todos" in h1 tag', async(() => {
-    let compiled = fixture.debugElement.nativeElement;
+    const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('h1').textContent).toContain('Todos');
   }));
 

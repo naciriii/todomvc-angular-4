@@ -1,17 +1,20 @@
-import {Injectable} from '@angular/core';
-import {Todo} from './todo';
+import { Injectable } from '@angular/core';
+import { LocalStorageService } from './local-storage.service';
+import { Todo } from './todo';
 
 @Injectable()
 export class TodoDataService {
 
   // Placeholder for last id so we can simulate
   // automatic incrementing of id's
-  lastId: number = 0;
+  lastId = 0;
 
   // Placeholder for todo's
-  todos: Todo[] = [];
+  todos: Todo[];
 
-  constructor() {
+  constructor(private localStorage: LocalStorageService) {
+    this.todos = this.localStorage.getItem('todos') ? this.localStorage.getItem('todos') : [];
+
   }
 
   // Simulate POST /todos
@@ -20,6 +23,9 @@ export class TodoDataService {
       todo.id = ++this.lastId;
     }
     this.todos.push(todo);
+    this.localStorage.setItem('todos', this.todos)
+
+
     return this;
   }
 
@@ -27,12 +33,13 @@ export class TodoDataService {
   deleteTodoById(id: number): TodoDataService {
     this.todos = this.todos
       .filter(todo => todo.id !== id);
+    this.localStorage.setItem('todos', this.todos)
     return this;
   }
 
   // Simulate PUT /todos/:id
   updateTodoById(id: number, values: Object = {}): Todo {
-    let todo = this.getTodoById(id);
+    const todo = this.getTodoById(id);
     if (!todo) {
       return null;
     }
@@ -42,7 +49,7 @@ export class TodoDataService {
 
   // Simulate GET /todos
   getAllTodos(): Todo[] {
-    return this.todos;
+    return this.todos
   }
 
   // Simulate GET /todos/:id
@@ -53,8 +60,8 @@ export class TodoDataService {
   }
 
   // Toggle todo complete
-  toggleTodoComplete(todo: Todo){
-    let updatedTodo = this.updateTodoById(todo.id, {
+  toggleTodoComplete(todo: Todo) {
+    const updatedTodo = this.updateTodoById(todo.id, {
       complete: !todo.complete
     });
     return updatedTodo;
